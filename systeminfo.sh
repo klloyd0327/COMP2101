@@ -1,5 +1,5 @@
 #!/bin/bash
-# Kyle Lloyd Bash Assginment
+# Kyle Lloyd Bash Assginment: System report
 # Student Number: 200342091
 # 2017 09 18
 
