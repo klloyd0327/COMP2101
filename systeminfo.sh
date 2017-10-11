@@ -1,7 +1,7 @@
 #!/bin/bash
 # Kyle Lloyd Bash Assginment: System report
 # Student Number: 200342091
-# 2017 09 18
+# 2017-10-11
 
 # Declare variables and assign any default values.
 
@@ -26,12 +26,13 @@ export diskspacewanted=""
 export diskspaceformatted=""
 
 export printerwanted=""
-export pirnterformatted=""
+export printerformatted=""
 
 export installedsoftwarewanted=""
 export installedsoftwareformatted=""
 
 # Define functions for error messages and displaying command line help.
+
 function displayinfo {
   echo "Usage:$0 [-h | --help] [-sn] [-on] [-dn] [-ip] [-ov] [-c] [-m] [-ds] [-p] [-s] "
 }
@@ -39,7 +40,8 @@ function replyerror {
   echo "$@" >&2
 }
 
-# Process the command line options, saving the results in variables for later use.
+# Process the command line options, saving the results in variables for later use. (Basicly the arguments you can use in the script)
+
 while [ $# -gt 0 ]; do
   case "$1" in
     -h|--help)
@@ -106,7 +108,7 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-# Gather the data into variables, using arrays where helpful.
+# Gather the data into variables using commands from linux and previous classes
 
 osinfo="$(grep PRETTY /etc/os-release |sed -e 's/.*=//' -e 's/"//g')"
 
@@ -114,12 +116,26 @@ domainname="$(grep PRETTY /etc/os-release |sed -e 's/.*=//' -e 's/"//g')"
 
 osversion="$(grep PRETTY /etc/os-release |sed -e 's/.*=//' -e 's/"//g')"
 
+ipaddress="$(hostname -I)"
+
+CPUinfo="$(cat /proc/cpuinfo | grep 'model name' | uniq)"
+
+RAMinfo="$(free -m | awk '/^Mem:/{print $2}')"
+
+discinfomration="$(df -m /tmp | tail -1 | awk '{print $4}')"
+
+printerinfo="$(lpstat -p | awk '{print $2}')"
+
+softwareinstalled="$(apt list --installed)"
+
+#Below was a command I used to try to get this to work, but with no success.
+#"$(sudo dpkg --get
+#-selections | "s/.*deinstall//" | less | sed "s/install$//g" > ~/pkglist | cat ~/pkglist)"
+
 systemname="$(hostname)"
-osversion="$(osversion)"
 domainname="$(domainname)"
 
-
-# Create the output using the gathered data and command line options.
+#  The output using the gathered data and command line options in a pretty way (What will show up to the user after using an argument with the script)
 
 osinfoformatted="
 Operating System Information:
@@ -140,12 +156,49 @@ Domain Name: $domainname
 "
 
 OSversionformatted="
-Operating System Version Information:
+Operating System Version Info:
 ----------------------------
 OS Version: $osversion
 "
 
-# Display the output.
+ipaddressformatted="
+IP Address Infomation:
+----------------------------
+IP Address: $ipaddress
+"
+
+CPUinfoformatted="
+CPU Information:
+----------------------------
+CPU Info: $CPUinfo
+"
+
+RAMinfoformatted="
+RAM Info:
+----------------------------
+RAM Installed (MB): $RAMinfo
+"
+
+diskspaceformatted="
+Disc Space Information:
+----------------------------
+Disc Space (MB): $discinfomration
+"
+
+printerformatted="
+Printer Information:
+----------------------------
+Printers currently connected: $printerinfo
+"
+
+installedsoftwareformatted="
+Software Infromaiton:
+----------------------------
+Software Installed on Device: $softwareinstalled
+"
+
+# Display the output to the user using the script using the above fomatted setup
+
 if [ "$defaultmode" = "yes" -o "$namesinfowanted" = "yes" ]; then
   echo "$nameinfoformatted"
 fi
@@ -162,4 +215,28 @@ if [ "$defaultmode" = "yes" -o  "$OSversionwanted" = "yes" ]; then
   echo "$OSversionformatted"
 fi
 
-# Do any cleanup of temporary files if needed
+if [ "$defaultmode" = "yes" -o  "$IPaddresswanted" = "yes" ]; then
+  echo "$ipaddressformatted"
+fi
+
+if [ "$defaultmode" = "yes" -o  "$CPUinfowanted" = "yes" ]; then
+  echo "$CPUinfoformatted"
+fi
+
+if [ "$defaultmode" = "yes" -o  "$RAMinfowanted" = "yes" ]; then
+  echo "$RAMinfoformatted"
+fi
+
+if [ "$defaultmode" = "yes" -o  "$diskspacewanted" = "yes" ]; then
+  echo "$diskspaceformatted"
+fi
+
+if [ "$defaultmode" = "yes" -o  "$printerwanted" = "yes" ]; then
+  echo "$printerformatted"
+fi
+
+if [ "$defaultmode" = "yes" -o  "$installedsoftwarewanted" = "yes" ]; then
+  echo "$installedsoftwareformatted"
+fi
+
+# Room to do any cleanup of temporary files if needed or also to add room for ideas for a cleaner more efficent version of the script
