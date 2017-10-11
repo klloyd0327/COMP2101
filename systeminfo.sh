@@ -107,6 +107,7 @@ while [ $# -gt 0 ]; do
 done
 
 # Gather the data into variables, using arrays where helpful.
+
 osinfo="$(grep PRETTY /etc/os-release |sed -e 's/.*=//' -e 's/"//g')"
 
 domainname="$(grep PRETTY /etc/os-release |sed -e 's/.*=//' -e 's/"//g')"
@@ -114,35 +115,34 @@ domainname="$(grep PRETTY /etc/os-release |sed -e 's/.*=//' -e 's/"//g')"
 osversion="$(grep PRETTY /etc/os-release |sed -e 's/.*=//' -e 's/"//g')"
 
 systemname="$(hostname)"
-domainname="$(domainname)"
 osversion="$(osversion)"
+domainname="$(domainname)"
 
 
 # Create the output using the gathered data and command line options.
+
 osinfoformatted="
 Operating System Information:
 -----------------------------
-$osinfo
+Operating System Installed: $osinfo
 "
 
 nameinfoformatted="
 System Names Information:
 -----------------------------
 System Name: $systemname
-Domainname: $domainname
 "
 
-domainnamewanted="
+domainnameformatted="
 Domain Names Information:
 -----------------------------
-System Name: $systemname
-Domainname: $domainname
+Domain Name: $domainname
 "
 
 OSversionformatted="
 Operating System Version Information:
 ----------------------------
-$osversion
+OS Version: $osversion
 "
 
 # Display the output.
@@ -155,7 +155,7 @@ if [ "$defaultmode" = "yes" -o  "$osinfowanted" = "yes" ]; then
 fi
 
 if [ "$defaultmode" = "yes" -o  "$domainnamewanted" = "yes" ]; then
-  echo "$domainnamewanted"
+  echo "$domainnameformatted"
 fi
 
 if [ "$defaultmode" = "yes" -o  "$OSversionwanted" = "yes" ]; then
