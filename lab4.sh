@@ -1,19 +1,14 @@
 #!/bin/bash
-# Kyle Lloyd Bash Assginment: System report
-# Student Number: 200342091
-# 2017 09 18
+# This script implements the system report from lab4 of comp2101
 
 # Declare variables and assign any default values.
-defaultmode="yes"
-
-export domainnamewanted=""
-export domainnameformatted=""
+runindefaultmode="yes"
 
 # Define functions for error messages and displaying command line help.
-function displayinfo {
-  echo "Usage:$0 [-h | --help] [-sn] [-on] [-dn]"
+function displayusage {
+  echo "Usage:$0 [-h | --help] [-n] [-o]"
 }
-function replyerror {
+function errormessage {
   echo "$@" >&2
 }
 
@@ -21,28 +16,20 @@ function replyerror {
 while [ $# -gt 0 ]; do
   case "$1" in
     -h|--help)
-      displayinfo
+      displayusage
       exit 0
       ;;
-
-    -sn)
+    -n)
       namesinfowanted="yes"
-      defaultmode="no"
+      runindefaultmode="no"
       ;;
-
-    -on)
+    -o)
       osinfowanted="yes"
-      defaultmode="no"
+      runindefaultmode="no"
       ;;
-
-    -dn)
-      domainnamewanted="yes"
-      defaultmode="no"
-      ;;
-
     *)
-      replyerror "I don't know what '$1' is. Sorry."
-      replyerror "$(displayinfo)"
+      errormessage "I don't know what '$1' is. Sorry."
+      errormessage "$(displayusage)"
       exit 1
       ;;
   esac
@@ -51,45 +38,30 @@ done
 
 # Gather the data into variables, using arrays where helpful.
 osinfo="$(grep PRETTY /etc/os-release |sed -e 's/.*=//' -e 's/"//g')"
-
-domainname="$(grep PRETTY /etc/os-release |sed -e 's/.*=//' -e 's/"//g')"
-
 systemname="$(hostname)"
 domainname="$(domainname)"
-
 
 # Create the output using the gathered data and command line options.
 osinfoformatted="
 Operating System Information:
 -----------------------------
 $osinfo
-"
 
+"
 nameinfoformatted="
 System Names Information:
 -----------------------------
-System Name: $systemname
+Hostname: $systemname
 Domainname: $domainname
-"
 
-domainnamewanted="
-Domain Names Information:
------------------------------
-System Name: $systemname
-Domainname: $domainname
 "
 
 # Display the output.
-if [ "$defaultmode" = "yes" -o "$namesinfowanted" = "yes" ]; then
+if [ "$runindefaultmode" = "yes" -o "$namesinfowanted" = "yes" ]; then
   echo "$nameinfoformatted"
 fi
-
-if [ "$defaultmode" = "yes" -o  "$osinfowanted" = "yes" ]; then
+if [ "$runindefaultmode" = "yes" -o  "$osinfowanted" = "yes" ]; then
   echo "$osinfoformatted"
-fi
-
-if [ "$defaultmode" = "yes" -o  "$domainnamewanted" = "yes" ]; then
-  echo "$domainnamewanted"
 fi
 
 # Do any cleanup of temporary files if needed
